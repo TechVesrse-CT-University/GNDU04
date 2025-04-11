@@ -18,7 +18,7 @@ ResQForce is a real-time emergency reporting and management platform built using
 
 
 ## 📁 Project Structure
-plaintext
+ ```plaintext
 ResQForce/
 │
 ├── app.py
@@ -53,7 +53,7 @@ ResQForce/
 │   ├── login.html
 │   ├── ndrf_dashboard.html
 │   └── register.html
-
+```
 
 
 ## 🔧 Features
