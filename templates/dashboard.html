@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rescue Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    
+</head>
+<body>
+    <!-- Add this right after the opening <body> tag -->
+<div id="emergencyAlert" style="
+position: fixed;
+top: 20px;
+left: 50%;
+transform: translateX(-50%);
+background: #ff4444;
+color: white;
+padding: 15px 25px;
+border-radius: 5px;
+box-shadow: 0 0 20px rgba(0,0,0,0.3);
+z-index: 10000;
+display: none;
+animation: pulseAlert 2s infinite;
+">
+🚨 NEW EMERGENCY DETECTED! 🚨
+<button onclick="hideAlert()" style="
+    background: transparent;
+    border: 1px solid white;
+    color: white;
+    margin-left: 15px;
+    padding: 0 10px;
+    border-radius: 3px;
+    cursor: pointer;
+">Dismiss</button>
+</div>
+
+
+    <!-- In the controls div, add this button -->
+<!-- Add this inside the controls div -->
+<div class="controls">
+    <button onclick="window.location.href='/emergency_map'" 
+            style="background: #e74c3c; color: white; margin-bottom: 10px;">
+        🚨 Emergency Detected
+    </button>
+    <!-- Keep existing buttons -->
+    <button onclick="updateLocation()">📍 Update My Location</button>
+    <button onclick="window.location.href='/logout'">🚪 Logout</button>
+</div>
+    
+    <div class="legend">
+        <div class="legend-item">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBmaWxsPSIjZTM3MzNjIiBkPSJNMTkgOGgydjZoLTJ2LTZ6bS0yIDZoLTRWOGg0djZ6bS02IDBIN1Y4aDJ2NnptLTQgMGgtMnYtNmgydjZ6Ii8+PHBhdGggZmlsbD0iI2UzNzMzYyIgZD0iTTEyIDJDNi40ODYgMiAyIDYuNDg2IDIgMTJzNC40ODYgMTAgMTAgMTAgMTAtNC40ODYgMTAtMTBTMTcuNTE0IDIgMTIgMnptMCAxOGMtNC40MTEgMC04LTMuNTg5LTgtOHMzLjU4OS04IDgtOCA4IDMuNTg5IDggOC0zLjU4OSA4LTggOHoiLz48L3N2Zz4=" class="legend-icon">
+            <span>Medical Teams</span>
+        </div>
+        <div class="legend-item">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBmaWxsPSIjZjM5YzEyIiBkPSJNMTIgMjNjLTQuNDExIDAtOC0zLjU4OS04LThzMy41ODktOCA4LTggOCAzLjU4OSA4IDgtMy41ODkgOC04IDh6bTAtMTRjLTMuMzA5IDAtNiAyLjY5MS02IDZzMi42OTEgNiA2IDYgNi0yLjY5MSA2LTYtMi42OTEtNi02LTZ6Ii8+PHBhdGggZmlsbD0iI2YzOWMxMiIgZD0iTTEyIDE5Yy0yLjIwNiAwLTQtMS43OTQtNC00czEuNzk0LTQgNC00IDQgMS43OTQgNCA0LTEuNzk0IDQtNCA0em0wLTZjLTEuMTAzIDAtMiAuODk3LTIgMnMuODk3IDIgMiAyIDItLjg5NyAyLTItLjg5Ny0yLTItMnoiLz48L3N2Zz4=" class="legend-icon">
+            <span>Firefighting</span>
+        </div>
+        <div class="legend-item">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBmaWxsPSIjMzQ5OGRiIiBkPSJNMTIgMkM4LjEzIDIgNSA1LjEzIDUgOWMwIDUuMjUgNyAxMyA3IDEzczctNy43NSA3LTEzYzAtMy44Ny0zLjEzLTctNy03em0wIDkuNWMtMS4zOCAwLTIuNS0xLjEyLTIuNS0yLjVzMS4xMi0yLjUgMi41LTIuNSAyLjUgMS4xMiAyLjUgMi41LTEuMTIgMi41LTIuNSAyLjV6Ii8+PC9zdmc+" class="legend-icon">
+            <span>Search & Rescue</span>
+        </div>
+        <div class="legend-item">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBmaWxsPSIjMmVjYzcxIiBkPSJNMTkgMTVoMnY0aC0yem0tMS03aC0zVjRIM3YxNWg0djJoMnYtMmg2djJoMnYtMmgzVjh6bS01LTMuODc1bDMuNzUgMy43NUgxM1Y3LjEyNXoiLz48L3N2Zz4=" class="legend-icon">
+            <span>Logistics</span>
+        </div>
+        <div class="legend-item">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBmaWxsPSIjYzAzOTJiIiBkPSJNMTIgMkwyIDIxaDIwTDEyIDJ6bTAgNC44M0wxOC40NyAxOUg1LjUzTDEyIDYuODN6TTEzIDE1aC0ydi0yaDJ2MnptMC00aC0yVjloMnYyeiIvPjwvc3ZnPg==" class="legend-icon pulsating">
+            <span>Emergencies</span>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
