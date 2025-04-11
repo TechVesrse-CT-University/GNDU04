@@ -21,38 +21,38 @@ ResQForce is a real-time emergency reporting and management platform built using
 ```plaintext
 ResQForce/
 │
-├── app.py
+├── app.py- all the routes and vaalidations in between  routes are there.
 ├── README.md
 │
 ├── sql/
-│   ├── sample_data.sql
-│   └── schema.sql
+│   ├── sample_data.sql- used for initiate data
+│   └── schema.sql- all SQL queries
 │
 ├── static/
 │   ├── css/
-│   │   ├── client.css
-│   │   ├── dashboard.css
-│   │   ├── emergency_map.css
-│   │   ├── index.css
-│   │   ├── login.css
-│   │   └── register.css
+│   │   ├── client.css- styling client.html
+│   │   ├── dashboard.css- code for styling dashboard.html
+│   │   ├── emergency_map.css- doing styling
+│   │   ├── index.css- main page styling
+│   │   ├── login.css- styling
+│   │   └── register.css- styling
 │   │
 │   ├── js/
-│   │   ├── dashboard.js
-│   │   └── emergency_map.js
+│   │   ├── dashboard.js- code for functioning emergency dashboard, logout,updating location for agency
+│   │   └── emergency_map.js- it helps agency to delete emergencies after completion
 │   │
 │   └── img/
-│       ├── Screenshot 2025-04-11 at XX.XX.XX.png
+│       ├── Screenshot 2025-04-11 at XX.XX.XX.png - screenshots of project
 │       └── ... (more screenshots)
 │
 ├── templates/
-│   ├── client.html
-│   ├── dashboard.html
-│   ├── emergency_map.html
-│   ├── index.html
-│   ├── login.html
-│   ├── ndrf_dashboard.html
-│   └── register.html
+│   ├── client.html- html code for reporting emergency
+│   ├── dashboard.html- code for dashboard.html 
+│   ├── emergency_map.html- back and deleting emergencies in this file
+│   ├── index.html- main page 
+│   ├── login.html- code for login user
+│   ├── ndrf_dashboard.html - html code for NDRF dashboard and  forms which  routes to another file
+│   └── register.html- code for new user and doing validation through functions 
 ```
 
 
